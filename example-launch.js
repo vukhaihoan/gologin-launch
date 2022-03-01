@@ -17,15 +17,17 @@ const GoLogin = require("./gologin");
         return;
     }
 
-    const browser = await puppeteer.connect({
-        browserWSEndpoint: wsUrl.toString(),
-        ignoreHTTPSErrors: true,
-    });
+    const { ORBITA_BROWSER, params, env } = wsUrl;
 
+    const browser = await puppeteer.launch({
+        headless: false,
+        executablePath: ORBITA_BROWSER,
+        args: params,
+    });
     const page = await browser.newPage();
-    await page.goto("https://myip.link/mini");
-    // console.log(await page.content());
+    await page.goto("https://www.facebook.com/");
+    console.log(await page.content());
     await page.screenshot({ path: "example.png" });
-    // await browser.close();
-    // await GL.stop();
+    await browser.close();
+    await GL.stop();
 })();

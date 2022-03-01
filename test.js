@@ -1,6 +1,7 @@
 const puppeteer = require("puppeteer-core");
 const GoLogin = require("./gologin");
 
+const { spawn, execFile } = require("child_process");
 (async () => {
     const GL = new GoLogin({
         token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2MjE3NjgyNTViOGFkMDRiNGFiNDIyN2EiLCJ0eXBlIjoiZGV2Iiwiand0aWQiOiI2MjE3NjgzNzcxOWQzMzlmZjFiNzE3NTAifQ.3AUfA13BeoEBg_UokJYPgC0qfoulvnIH-o79h-1s-Pc",
@@ -17,15 +18,9 @@ const GoLogin = require("./gologin");
         return;
     }
 
-    const browser = await puppeteer.connect({
-        browserWSEndpoint: wsUrl.toString(),
-        ignoreHTTPSErrors: true,
-    });
+    const { ORBITA_BROWSER, params, env } = wsUrl;
 
-    const page = await browser.newPage();
-    await page.goto("https://myip.link/mini");
-    // console.log(await page.content());
-    await page.screenshot({ path: "example.png" });
-    // await browser.close();
-    // await GL.stop();
+    const child = execFile(ORBITA_BROWSER, params, { env }); // COMMENT
+    // const child = spawn(ORBITA_BROWSER, params, { env, shell: true });
+    child.stdout.on("data", (data) => debug(data.toString())); // COMMENT
 })();
